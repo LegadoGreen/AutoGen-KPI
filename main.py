@@ -18,7 +18,7 @@ if not os.environ.get("OPENAI_API_KEY"):
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 
 app = FastAPI()
-model = ChatOpenAI(model="gpt-4o")
+model = ChatOpenAI(model="gpt-4o-mini")
 
 @app.get("/")
 def read_root():
@@ -50,11 +50,11 @@ def load_pdfs_from_folder(folder_path):
 # Function to create a RAG pipeline with the new structure
 def create_rag_pipeline(documents):
     # Split the documents into smaller chunks
-    text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
+    text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200, add_start_index=True)
     texts = text_splitter.split_documents(documents)
 
     # Create embeddings for the text chunks
-    embeddings = OpenAIEmbeddings()
+    embeddings = OpenAIEmbeddings(model="text-embedding-3-large")
 
     # Create a vector store for the embeddings
     vector_store = FAISS.from_documents(texts, embeddings)
